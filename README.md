@@ -6,6 +6,8 @@ A beautiful, self-hosted RSS feed aggregator for groups.io communities. Combines
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
+> ⚠️ **Important:** This project requires your own groups.io API key. Never share your API key or commit it to version control.
+
 ## ✨ Features
 
 - 📡 **Unified RSS Feed** - Combines topics from all your subscribed groups
@@ -42,15 +44,26 @@ pip install -r requirements.txt
 
 ### 3. Configure API Key
 
-1. Get your groups.io API key from: https://groups.io/account
-2. Copy `.env.example` to `.env`:
+⚠️ **IMPORTANT: You must use your own groups.io API key**
+
+1. **Get your API key:**
+   - Go to https://groups.io/account
+   - Scroll to "API Keys" section
+   - Click "Create New API Key"
+   - Copy the 64-character key (you won't be able to see it again!)
+
+2. **Create .env file:**
    ```bash
    cp .env.example .env
    ```
-3. Edit `.env` and add your API key:
+
+3. **Add your API key to .env:**
+   ```bash
+   # Edit .env and replace with YOUR actual API key
+   GROUPS_IO_API_KEY=paste_your_64_character_api_key_here
    ```
-   GROUPS_IO_API_KEY=your_64_character_api_key_here
-   ```
+
+   **Note:** Never share your API key or commit the `.env` file to git!
 
 ### 4. Run the Server
 
