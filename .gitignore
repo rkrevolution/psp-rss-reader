@@ -29,3 +29,6 @@ feed.xml
 
 # Logs
 *.log
+
+# API key files
+psp1
