@@ -93,7 +93,19 @@ Running locally means:
 - ✅ 24/7 availability
 - ✅ No computer needed
 
-**Easiest free option - Render.com (5 minutes):**
+**🌟 Easiest: GitHub Pages + Actions (100% free, no server!):**
+
+Perfect if you just need the RSS feed (no web reader needed):
+
+1. Fork this repo
+2. Add your API key as GitHub Secret: `GROUPS_IO_API_KEY`
+3. Enable GitHub Pages in repo settings
+4. Auto-updates every 30 minutes!
+5. Feed URL: `https://yourusername.github.io/psp-rss-reader/feed.xml`
+
+📚 **[GitHub Pages setup guide →](GITHUB_PAGES.md)** (10 minutes)
+
+**⚡ Need web reader too? Use Render.com (5 minutes):**
 
 1. Push this repo to GitHub
 2. Go to https://render.com (sign up free)
@@ -102,9 +114,9 @@ Running locally means:
 5. Deploy!
 6. Get permanent URL: `https://psp-rss-reader.onrender.com/feed.xml`
 
-**Other free options:** Railway.app, Fly.io, ngrok
+**Other options:** Railway.app, Fly.io, Oracle Cloud (free forever), Self-host
 
-📚 **[Full deployment guide with all free options →](DEPLOYMENT.md)**
+📚 **[Full deployment guide →](DEPLOYMENT.md)** | **[Open source hosting →](OPENSOURCE_HOSTING.md)**
 
 ## 📱 Mobile Setup
 

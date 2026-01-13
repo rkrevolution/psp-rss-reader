@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSP RSS Feed</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .feed-url {
+            background: #f5f7fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .feed-url a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .feed-url a:hover {
+            text-decoration: underline;
+        }
+
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .button.secondary {
+            background: #95a5a6;
+        }
+
+        .info {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            border-radius: 4px;
+        }
+
+        .info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .info p {
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📡</div>
+        <h1>Park Slope Parents RSS Feed</h1>
+        <div class="subtitle">Auto-updated every 30 minutes via GitHub Actions</div>
+
+        <div class="info">
+            <h3>📱 Subscribe to this feed:</h3>
+            <p>Add the URL below to your RSS reader (NetNewsWire, Feeder, etc.)</p>
+        </div>
+
+        <div class="feed-url">
+            <a href="feed.xml" id="feed-link">Loading...</a>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">~50</div>
+                <div class="stat-label">Topics</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Groups</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">30min</div>
+                <div class="stat-label">Refresh</div>
+            </div>
+        </div>
+
+        <div>
+            <a href="feed.xml" class="button">📄 View Feed</a>
+            <a href="https://github.com/rkrevolution/psp-rss-reader" class="button secondary">
+                💻 View on GitHub
+            </a>
+        </div>
+
+        <div class="info" style="margin-top: 30px;">
+            <h3>ℹ️ About</h3>
+            <p>
+                This RSS feed aggregates topics from Park Slope Parents groups.io communities.
+                It updates automatically every 30 minutes using GitHub Actions and is served
+                for free via GitHub Pages.
+            </p>
+        </div>
+
+        <div class="info">
+            <h3>🚀 Want your own?</h3>
+            <p>
+                Fork this repo, add your groups.io API key as a GitHub secret, and enable
+                GitHub Pages. See the
+                <a href="https://github.com/rkrevolution/psp-rss-reader/blob/main/GITHUB_PAGES.md">
+                    setup guide
+                </a>.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Set feed URL dynamically
+        const feedUrl = window.location.origin + '/feed.xml';
+        const feedLink = document.getElementById('feed-link');
+        feedLink.href = feedUrl;
+        feedLink.textContent = feedUrl;
+    </script>
+</body>
+</html>
