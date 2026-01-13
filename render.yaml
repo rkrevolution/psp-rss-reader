@@ -11,4 +11,8 @@ services:
         value: 10
       - key: REFRESH_INTERVAL_MINUTES
         value: 30
+      - key: FEED_USERNAME
+        sync: false
+      - key: FEED_PASSWORD
+        sync: false
     autoDeploy: true
