@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: psp-rss-reader
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python3 fastapi_rss_server.py
+    envVars:
+      - key: GROUPS_IO_API_KEY
+        sync: false
+      - key: TOPICS_PER_GROUP
+        value: 10
+      - key: REFRESH_INTERVAL_MINUTES
+        value: 30
+    autoDeploy: true

@@ -76,37 +76,68 @@ The server will start at:
 - 📡 **RSS Feed**: http://localhost:8000/feed.xml
 - 📚 **API Docs**: http://localhost:8000/docs
 
+> ⚠️ **Important:** `localhost` only works on your computer. For mobile access or 24/7 availability, see [Free Cloud Deployment](#-free-cloud-deployment) below!
+
+## 🌐 Free Cloud Deployment
+
+**Want to access from anywhere? Deploy for FREE in 5 minutes!**
+
+Running locally means:
+- ❌ Only works on your WiFi network
+- ❌ Stops when computer turns off
+- ❌ Can't use on mobile (unless on same network)
+
+**Free cloud options give you:**
+- ✅ Permanent HTTPS URL (e.g., `https://your-app.onrender.com/feed.xml`)
+- ✅ Works from anywhere (cellular, any WiFi)
+- ✅ 24/7 availability
+- ✅ No computer needed
+
+**Easiest free option - Render.com (5 minutes):**
+
+1. Push this repo to GitHub
+2. Go to https://render.com (sign up free)
+3. Create "New Web Service" → Connect your repo
+4. Add environment variable: `GROUPS_IO_API_KEY`
+5. Deploy!
+6. Get permanent URL: `https://psp-rss-reader.onrender.com/feed.xml`
+
+**Other free options:** Railway.app, Fly.io, ngrok
+
+📚 **[Full deployment guide with all free options →](DEPLOYMENT.md)**
+
 ## 📱 Mobile Setup
 
-### iPhone/iPad (NetNewsWire)
+### Best Way: Use Cloud Deployment
 
-1. Install **NetNewsWire** (free from App Store)
-2. Find your computer's IP address:
+**After deploying to Render/Railway** (see above), simply use your cloud URL:
+
+**iPhone/iPad (NetNewsWire):**
+1. Install NetNewsWire (free from App Store)
+2. Add Feed → `https://psp-rss-reader.onrender.com/feed.xml`
+3. Done! Works everywhere (WiFi, cellular)
+
+**Android (Feeder):**
+1. Install Feeder (free from F-Droid or Play Store)
+2. Add Feed → `https://psp-rss-reader.onrender.com/feed.xml`
+3. Done!
+
+### Alternative: Local Network Only
+
+**If running locally** (only works on same WiFi):
+
+1. Find your computer's IP:
    ```bash
    ifconfig | grep "inet " | grep -v 127.0.0.1
+   # Example output: 192.168.1.100
    ```
-3. In NetNewsWire: **Add Feed** → `http://YOUR_IP:8000/feed.xml`
-4. Enjoy your unified feed!
 
-### Android (Feeder)
+2. Use: `http://YOUR_IP:8000/feed.xml`
+   - ⚠️ Only works on same WiFi
+   - ⚠️ Stops working when computer sleeps
+   - ⚠️ IP address can change
 
-1. Install **Feeder** (free from F-Droid or Play Store)
-2. Open Feeder → **+** button
-3. Add feed: `http://YOUR_IP:8000/feed.xml`
-
-### Remote Access (ngrok)
-
-For access from anywhere:
-
-```bash
-# Terminal 1: Start the RSS server
-python3 fastapi_rss_server.py
-
-# Terminal 2: Start ngrok
-ngrok http 8000
-```
-
-Use the HTTPS URL ngrok provides in your RSS reader!
+**Recommendation:** Deploy to cloud instead for reliable access!
 
 ## ⚙️ Configuration
 
@@ -149,25 +180,6 @@ Automatically combines topics from:
 - All sorted by most recent
 
 ## 🛠️ Advanced Usage
-
-### Deploy to Cloud (24/7 Access)
-
-#### Railway.app (Free Tier)
-
-1. Push this repo to GitHub
-2. Connect to Railway: https://railway.app
-3. Deploy from GitHub repo
-4. Add environment variable: `GROUPS_IO_API_KEY`
-5. Get permanent URL!
-
-#### Render.com (Free Tier)
-
-1. Push to GitHub
-2. Create new Web Service on Render
-3. Build command: `pip install -r requirements.txt`
-4. Start command: `python3 fastapi_rss_server.py`
-5. Add environment variable
-6. Deploy!
 
 ### Run as Background Service (Linux)
 
