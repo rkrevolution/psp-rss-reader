@@ -17,8 +17,9 @@ Access:
     http://localhost:8000/docs (API documentation)
 """
 
-from fastapi import FastAPI, Response, BackgroundTasks
+from fastapi import FastAPI, Response, BackgroundTasks, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import requests
 from datetime import datetime
 from xml.etree.ElementTree import Element, SubElement, tostring
@@ -27,6 +28,7 @@ import time
 from contextlib import asynccontextmanager
 import asyncio
 import os
+import secrets
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -37,9 +39,17 @@ API_KEY = os.getenv("GROUPS_IO_API_KEY")
 if not API_KEY:
     raise ValueError("GROUPS_IO_API_KEY not found in environment variables. Please create a .env file.")
 
+# Optional HTTP Basic Auth credentials
+FEED_USERNAME = os.getenv("FEED_USERNAME", "")
+FEED_PASSWORD = os.getenv("FEED_PASSWORD", "")
+AUTH_ENABLED = bool(FEED_USERNAME and FEED_PASSWORD)
+
 BASE_URL = "https://groups.io/api/v1"
 TOPICS_PER_GROUP = int(os.getenv("TOPICS_PER_GROUP", "10"))
 REFRESH_INTERVAL = int(os.getenv("REFRESH_INTERVAL_MINUTES", "30")) * 60  # Convert to seconds
+
+# Security
+security = HTTPBasic()
 
 # Feed metadata
 FEED_TITLE = "Park Slope Parents - All Groups"
@@ -49,6 +59,24 @@ FEED_DESCRIPTION = "Recent topics from all my Park Slope Parents groups"
 # Cache
 feed_cache = {"xml": None, "last_updated": None}
 group_alias_cache = {}  # Maps group_id to URL alias
+
+
+def verify_credentials(credentials: HTTPBasicCredentials = Depends(security)):
+    """Verify HTTP Basic Auth credentials"""
+    if not AUTH_ENABLED:
+        # If auth is not configured, allow access
+        return True
+
+    correct_username = secrets.compare_digest(credentials.username, FEED_USERNAME)
+    correct_password = secrets.compare_digest(credentials.password, FEED_PASSWORD)
+
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return True
 
 
 def make_api_request(endpoint, params=None):
@@ -343,7 +371,8 @@ async def root():
 
         <div class="status">
             ✓ Server is running<br>
-            Last updated: {last_update_str}
+            Last updated: {last_update_str}<br>
+            {"🔒 Password protection: ENABLED" if AUTH_ENABLED else "⚠️ Password protection: DISABLED (public access)"}
         </div>
 
         <h2>Your RSS Feed URL</h2>
@@ -394,8 +423,8 @@ async def root():
 
 
 @app.get("/feed.xml")
-async def get_feed():
-    """Get the RSS feed"""
+async def get_feed(authorized: bool = Depends(verify_credentials)):
+    """Get the RSS feed (password protected if configured)"""
     xml = feed_cache.get('xml')
 
     if not xml:
@@ -406,8 +435,8 @@ async def get_feed():
 
 
 @app.get("/refresh")
-async def refresh_feed(background_tasks: BackgroundTasks):
-    """Manually refresh the feed"""
+async def refresh_feed(background_tasks: BackgroundTasks, authorized: bool = Depends(verify_credentials)):
+    """Manually refresh the feed (password protected if configured)"""
     background_tasks.add_task(generate_feed)
     return {
         "status": "refreshing",
@@ -429,8 +458,8 @@ async def get_status():
 
 
 @app.get("/reader", response_class=HTMLResponse)
-async def feed_reader():
-    """Web-based feed reader"""
+async def feed_reader(authorized: bool = Depends(verify_credentials)):
+    """Web-based feed reader (password protected if configured)"""
     with open('feed_reader.html', 'r') as f:
         return f.read()
 
