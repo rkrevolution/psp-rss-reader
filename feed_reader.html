@@ -310,8 +310,8 @@
             container.innerHTML = '<div class="loading">🔄 Loading your feed...</div>';
 
             try {
-                // Fetch the RSS feed
-                const response = await fetch('http://localhost:8000/feed.xml');
+                // Fetch the RSS feed (relative URL works on any domain)
+                const response = await fetch('/feed.xml');
                 const xmlText = await response.text();
 
                 // Parse XML
@@ -349,7 +349,7 @@
                     <div class="error">
                         <strong>Error loading feed</strong><br>
                         ${error.message}<br>
-                        Make sure the server is running at http://localhost:8000
+                        Make sure you're logged in and the server is running properly
                     </div>
                 `;
             }
