@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Park Slope Parents Feed Reader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c33;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 2px solid #e0e6ed;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            border-color: #667eea;
+        }
+
+        .feed-item {
+            background: white;
+            padding: 24px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .feed-item:hover {
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            border-left-color: #667eea;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+            gap: 15px;
+        }
+
+        .item-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            text-decoration: none;
+            flex: 1;
+        }
+
+        .item-title:hover {
+            color: #667eea;
+        }
+
+        .group-badge {
+            display: inline-block;
+            background: #e8eaf6;
+            color: #5c6bc0;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .group-badge.classifieds {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .group-badge.may2026 {
+            background: #e0f2f1;
+            color: #00897b;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .item-description {
+            color: #546e7a;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+        }
+
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .read-more {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.3s;
+        }
+
+        .read-more:hover {
+            gap: 8px;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .item-title {
+                font-size: 1.1rem;
+            }
+
+            .refresh-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📡 Park Slope Parents Feed</h1>
+            <div class="subtitle">All your groups in one place</div>
+            <div class="stats">
+                <div class="stat" id="total-items">Loading...</div>
+                <div class="stat" id="last-updated">Checking...</div>
+            </div>
+        </header>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Topics</button>
+            <button class="filter-btn" data-filter="parkslopeparents">Advice</button>
+            <button class="filter-btn" data-filter="Classifieds">Classifieds</button>
+            <button class="filter-btn" data-filter="May2026">May2026</button>
+            <input type="text" class="search-box" placeholder="🔍 Search topics..." id="search-input">
+        </div>
+
+        <div id="feed-container">
+            <div class="loading">🔄 Loading your feed...</div>
+        </div>
+    </div>
+
+    <button class="refresh-btn" onclick="loadFeed()">🔄 Refresh</button>
+
+    <script>
+        let allItems = [];
+        let currentFilter = 'all';
+
+        async function loadFeed() {
+            const container = document.getElementById('feed-container');
+            container.innerHTML = '<div class="loading">🔄 Loading your feed...</div>';
+
+            try {
+                // Fetch the RSS feed
+                const response = await fetch('http://localhost:8000/feed.xml');
+                const xmlText = await response.text();
+
+                // Parse XML
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+
+                // Get all items
+                const items = xmlDoc.querySelectorAll('item');
+                allItems = Array.from(items).map(item => ({
+                    title: item.querySelector('title')?.textContent || '',
+                    link: item.querySelector('link')?.textContent || '',
+                    description: item.querySelector('description')?.textContent || '',
+                    pubDate: item.querySelector('pubDate')?.textContent || '',
+                    author: item.querySelector('author')?.textContent || '',
+                    category: item.querySelector('category')?.textContent || '',
+                    element: item
+                }));
+
+                // Update stats
+                document.getElementById('total-items').textContent = `📊 ${allItems.length} Topics`;
+
+                const lastBuildDate = xmlDoc.querySelector('lastBuildDate')?.textContent;
+                if (lastBuildDate) {
+                    const date = new Date(lastBuildDate);
+                    document.getElementById('last-updated').textContent =
+                        `🕐 Updated ${formatRelativeTime(date)}`;
+                }
+
+                // Display items
+                displayItems(allItems);
+
+            } catch (error) {
+                console.error('Error loading feed:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <strong>Error loading feed</strong><br>
+                        ${error.message}<br>
+                        Make sure the server is running at http://localhost:8000
+                    </div>
+                `;
+            }
+        }
+
+        function displayItems(items) {
+            const container = document.getElementById('feed-container');
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 4rem;">📭</div>
+                        <h2>No topics found</h2>
+                        <p>Try adjusting your filters or search</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(item => {
+                // Extract group name from title
+                const titleMatch = item.title.match(/\[(.*?)\]/);
+                const groupName = titleMatch ? titleMatch[1] : '';
+                const actualTitle = item.title.replace(/\[.*?\]\s*/, '');
+
+                // Determine badge class
+                let badgeClass = '';
+                if (groupName.includes('Classifieds')) badgeClass = 'classifieds';
+                else if (groupName.includes('May2026')) badgeClass = 'may2026';
+
+                // Parse description
+                const lines = item.description.split('\n');
+                const summary = lines[0];
+                const postedBy = lines.find(l => l.startsWith('Posted by:'))?.replace('Posted by:', '').trim() || item.author;
+                const messages = lines.find(l => l.startsWith('Messages:'))?.replace('Messages:', '').trim() || '0';
+                const hasAttachments = item.description.includes('Has attachments');
+
+                // Format date
+                const date = new Date(item.pubDate);
+                const relativeTime = formatRelativeTime(date);
+
+                return `
+                    <div class="feed-item" data-category="${item.category}">
+                        <div class="item-header">
+                            <a href="${item.link}" target="_blank" class="item-title">
+                                ${actualTitle}
+                            </a>
+                            <span class="group-badge ${badgeClass}">${groupName || item.category}</span>
+                        </div>
+                        <div class="item-meta">
+                            <div class="meta-item">
+                                👤 ${postedBy}
+                            </div>
+                            <div class="meta-item">
+                                💬 ${messages} replies
+                            </div>
+                            <div class="meta-item">
+                                🕐 ${relativeTime}
+                            </div>
+                            ${hasAttachments ? '<div class="meta-item">📎 Attachments</div>' : ''}
+                        </div>
+                        <div class="item-description">${summary}</div>
+                        <div class="item-footer">
+                            <a href="${item.link}" target="_blank" class="read-more">
+                                Read full topic →
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatRelativeTime(date) {
+            const now = new Date();
+            const diff = now - date;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (seconds < 60) return 'just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+
+            return date.toLocaleDateString();
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active state
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Apply filter
+                currentFilter = btn.dataset.filter;
+                filterItems();
+            });
+        });
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            filterItems(e.target.value);
+        });
+
+        function filterItems(searchTerm = '') {
+            let filtered = allItems;
+
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(item =>
+                    item.category.includes(currentFilter) || item.title.includes(currentFilter)
+                );
+            }
+
+            // Apply search filter
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filtered = filtered.filter(item =>
+                    item.title.toLowerCase().includes(term) ||
+                    item.description.toLowerCase().includes(term) ||
+                    item.author.toLowerCase().includes(term)
+                );
+            }
+
+            displayItems(filtered);
+        }
+
+        // Load feed on page load
+        loadFeed();
+
+        // Auto-refresh every 5 minutes
+        setInterval(loadFeed, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
